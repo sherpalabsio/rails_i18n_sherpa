@@ -3,7 +3,7 @@
 require "yaml"
 require "fileutils"
 
-require "./lib/user_interface"
+require_relative "./lib/user_interface"
 
 class AddOrUpdate
   SUPPORTED_LOCALES = %w[en nl fr].freeze
