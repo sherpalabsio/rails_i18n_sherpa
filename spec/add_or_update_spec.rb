@@ -26,8 +26,9 @@ describe AddOrUpdate do
   end
 
   before do
-    # TODO: move locales to a constant
-    %w[en nl fr].each do |locale|
+    stub_const("AddOrUpdate::SUPPORTED_LOCALES", %w[en fr])
+
+    AddOrUpdate::SUPPORTED_LOCALES.each do |locale|
       locale_file = File.join("config", "locales", "#{locale}.yml")
       content = initial_locale_file_content.gsub("{locale}", locale)
       FileUtils.mkdir_p(File.dirname(locale_file))

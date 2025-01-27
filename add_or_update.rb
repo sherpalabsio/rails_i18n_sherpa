@@ -4,6 +4,8 @@ require "yaml"
 require "fileutils"
 
 class AddOrUpdate
+  SUPPORTED_LOCALES = %w[en nl fr].freeze
+
   def self.run
     new.run
   end
@@ -15,7 +17,7 @@ class AddOrUpdate
       # TODO: Warn if key is missing
       key_path = entry["key"].split(".")
 
-      %w[en nl fr].each do |locale|
+      SUPPORTED_LOCALES.each do |locale|
         locale_file = File.join("config", "locales", "#{locale}.yml")
 
         current_translations = YAML.load_file(locale_file)
