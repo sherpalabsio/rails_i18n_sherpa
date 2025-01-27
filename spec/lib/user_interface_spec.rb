@@ -8,11 +8,9 @@ describe UserInterface do
       <<~TRANSLATIONS
         - key: key1.value
           en: English1
-          nl: Dutch
           fr: French
         - key: key2.value
           en: English2
-          nl: Dutch
           fr: French
       TRANSLATIONS
     end

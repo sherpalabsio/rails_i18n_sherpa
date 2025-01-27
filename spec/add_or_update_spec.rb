@@ -3,15 +3,6 @@
 require "./add_or_update"
 
 describe AddOrUpdate do
-  let(:translation_file_content) do
-    <<~HEREDOC
-      - key: test.key
-        en: Copy en
-        nl: Copy nl
-        fr: Copy fr
-    HEREDOC
-  end
-
   let(:initial_locale_file_content) do
     <<~HEREDOC
       ---
@@ -40,22 +31,59 @@ describe AddOrUpdate do
     FileUtils.rm_rf("config")
   end
 
-  it "adds a new translation key" do
-    allow_any_instance_of(Object).to receive(:system) do |_, command|
-      File.write("/tmp/TRANSLATIONS.yml", translation_file_content) if command.include?("/tmp/TRANSLATIONS.yml")
+  describe "adding a new translations" do
+    let(:translation_from_user) do
+      <<~HEREDOC
+        - key: test.key
+          en: Copy en
+          fr: Copy fr
+      HEREDOC
     end
 
-    described_class.run
+    it "adds a new translation key" do
+      allow_any_instance_of(Object).to receive(:system) do |_, command|
+        File.write("/tmp/TRANSLATIONS.yml", translation_from_user) if command.include?("/tmp/TRANSLATIONS.yml")
+      end
 
-    expected_content = <<~HEREDOC
-      ---
-      en:
-        level_1:
-          sub_level1: Initial content
-        test:
-          key: Copy en
-    HEREDOC
+      described_class.run
 
-    expect(en_local_file_content).to eq(expected_content)
+      expected_content = <<~HEREDOC
+        ---
+        en:
+          level_1:
+            sub_level1: Initial content
+          test:
+            key: Copy en
+      HEREDOC
+
+      expect(en_local_file_content).to eq(expected_content)
+    end
+  end
+
+  describe "modifying existing translations" do
+    let(:translation_from_user) do
+      <<~HEREDOC
+        - key: level_1.sub_level1
+          en: Updated content en
+          fr: Updated content fr
+      HEREDOC
+    end
+
+    it "adds a new translation key" do
+      allow_any_instance_of(Object).to receive(:system) do |_, command|
+        File.write("/tmp/TRANSLATIONS.yml", translation_from_user) if command.include?("/tmp/TRANSLATIONS.yml")
+      end
+
+      described_class.run
+
+      expected_content = <<~HEREDOC
+        ---
+        en:
+          level_1:
+            sub_level1: Updated content en
+      HEREDOC
+
+      expect(en_local_file_content).to eq(expected_content)
+    end
   end
 end
