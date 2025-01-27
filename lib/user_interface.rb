@@ -15,9 +15,14 @@ module UserInterface
     if File.exist?(TEMP_FILE_PATH)
       translations = YAML.load_file(TEMP_FILE_PATH)
       File.delete(TEMP_FILE_PATH)
+      remove_last_console_line
       translations
     else
       exit 2
     end
+  end
+
+  def self.remove_last_console_line
+    print "\e[A\e[K"
   end
 end

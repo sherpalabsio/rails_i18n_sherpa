@@ -31,13 +31,9 @@ class AddOrUpdate
         File.open(locale_file, "w") do |file|
           file.write(current_translations.to_yaml(line_width: -1))
         end
-
-        puts "Updated #{locale}.yml with key #{entry['key']}"
       end
     end
 
     system("i18n-tasks normalize") if system("command -v i18n-tasks > /dev/null")
-
-    puts "Translation update complete!"
   end
 end
