@@ -34,9 +34,9 @@ describe AddOrUpdate do
   describe "adding a new translations" do
     let(:translation_from_user) do
       <<~HEREDOC
-        - key: test.key
-          en: Copy en
-          fr: Copy fr
+        key: test.key
+        en: Copy en
+        fr: Copy fr
       HEREDOC
     end
 
@@ -63,9 +63,9 @@ describe AddOrUpdate do
   describe "modifying existing translations" do
     let(:translation_from_user) do
       <<~HEREDOC
-        - key: level_1.sub_level1
-          en: Updated content en
-          fr: Updated content fr
+        key: level_1.sub_level1
+        en: Updated content en
+        fr: Updated content fr
       HEREDOC
     end
 
