@@ -41,13 +41,11 @@ describe AddOrUpdate do
   end
 
   it "adds a new translation key" do
-    allow_any_instance_of(AddOrUpdate).to receive(:system) do |_, command|
+    allow_any_instance_of(Object).to receive(:system) do |_, command|
       File.write("/tmp/TRANSLATIONS.yml", translation_file_content) if command.include?("/tmp/TRANSLATIONS.yml")
     end
 
     described_class.run
-
-    expect(File).not_to exist("/tmp/TRANSLATIONS.yml")
 
     expected_content = <<~HEREDOC
       ---

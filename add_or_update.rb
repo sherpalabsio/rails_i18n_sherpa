@@ -3,6 +3,8 @@
 require "yaml"
 require "fileutils"
 
+require "./lib/user_interface"
+
 class AddOrUpdate
   SUPPORTED_LOCALES = %w[en nl fr].freeze
 
@@ -11,9 +13,7 @@ class AddOrUpdate
   end
 
   def run
-    translations = read_translations
-
-    translations.each do |entry|
+    UserInterface.fetch_translations.each do |entry|
       # TODO: Warn if key is missing
       key_path = entry["key"].split(".")
 
@@ -39,28 +39,5 @@ class AddOrUpdate
     system("i18n-tasks normalize") if system("command -v i18n-tasks > /dev/null")
 
     puts "Translation update complete!"
-  end
-
-  private
-
-  def read_translations
-    editor = ENV["EDITOR"] || "vim"
-    temp_file_path = "/tmp/TRANSLATIONS.yml"
-
-    puts "hint: Waiting for your editor to close the file..."
-
-    system("#{editor} #{temp_file_path}")
-
-    if File.exist?(temp_file_path)
-      translations = YAML.load_file(temp_file_path)
-      File.delete(temp_file_path)
-      translations
-    else
-      exit 2
-    end
-  end
-
-  def system(command)
-    super
   end
 end
