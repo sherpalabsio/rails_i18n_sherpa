@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require "./add_or_update"
+require_relative "../../lib/add_or_update"
 
 describe AddOrUpdate do
   let(:initial_locale_file_content) do
