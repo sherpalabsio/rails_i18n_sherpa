@@ -4,7 +4,7 @@ require "./lib/user_interface"
 
 describe UserInterface do
   describe ".fetch_translations" do
-    let(:translations_content) do
+    let(:translations_from_the_user) do
       <<~TRANSLATIONS
         key: key1.value
         en: English1
@@ -19,7 +19,7 @@ describe UserInterface do
       ENV["EDITOR"] = <<~EDITOR.strip
         perl -e '
           open my $fh, ">", $ARGV[0];
-          print $fh "#{translations_content}";
+          print $fh "#{translations_from_the_user}";
           close $fh;
         '
       EDITOR
@@ -42,8 +42,8 @@ describe UserInterface do
       expect(File).not_to exist(described_class::TEMP_FILE_PATH)
     end
 
-    context "when there is a new line in the translation" do
-      let(:translations_content) do
+    context "multiline translations" do
+      let(:translations_from_the_user) do
         <<~TRANSLATIONS
           key: key1.value
           en: English1
@@ -53,16 +53,6 @@ describe UserInterface do
           en: English2
           fr: French
         TRANSLATIONS
-      end
-
-      before do
-        ENV["EDITOR"] = <<~EDITOR.strip
-          perl -e '
-            open my $fh, ">", $ARGV[0];
-            print $fh "#{translations_content}";
-            close $fh;
-          '
-        EDITOR
       end
 
       it "returns the expected data structure" do
