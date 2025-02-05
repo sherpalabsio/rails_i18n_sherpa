@@ -8,12 +8,12 @@ require_relative "./user_interface"
 class AddOrUpdate
   SUPPORTED_LOCALES = %w[en nl fr].freeze
 
-  def self.run
-    new.run
+  def self.run(number_of_expected_translations = 1)
+    new.run(number_of_expected_translations)
   end
 
-  def run
-    translations = UserInterface.fetch_translations
+  def run(number_of_expected_translations = 1)
+    translations = UserInterface.fetch_translations(number_of_expected_translations)
     return if translations.nil?
 
     translations.each do |entry|

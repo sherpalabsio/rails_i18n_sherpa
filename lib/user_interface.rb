@@ -5,19 +5,27 @@ module UserInterface
   SUPPORTED_LOCALES = %w[en nl fr].freeze
   SUPPORTED_LOCALE_PREFIXES = SUPPORTED_LOCALES.map { |locale| "#{locale}:" }
 
-  def self.fetch_translations
+  USER_INPUT_FILE_TEMPLATE = <<~USER_INPUT.freeze
+    key:
+    #{SUPPORTED_LOCALES.map { |locale| "#{locale}:" }.join("\n")}
+  USER_INPUT
+
+  def self.fetch_translations(number_of_expected_translations = 1)
     editor = ENV["EDITOR"] || "vim"
 
     puts "hint: Waiting for your editor to close the file..." if ENV["RUBY_ENV"] != "test"
 
+    File.write(TEMP_FILE_PATH, user_input_file_template(number_of_expected_translations))
     system("#{editor} #{TEMP_FILE_PATH}")
-
-    return unless File.exist?(TEMP_FILE_PATH)
 
     translations = parse_user_input(File.read(TEMP_FILE_PATH))
     File.delete(TEMP_FILE_PATH)
     remove_last_console_line if ENV["RUBY_ENV"] != "test"
     translations
+  end
+
+  def self.user_input_file_template(number_of_expected_translations)
+    ([USER_INPUT_FILE_TEMPLATE] * number_of_expected_translations).join("\n")
   end
 
   def self.parse_user_input(content)

@@ -2,4 +2,10 @@
 
 require_relative "./lib/add_or_update"
 
-AddOrUpdate.run
+number_of_expected_translations = if ARGV[0].to_i == 0
+                                    1
+                                  else
+                                    ARGV[0].to_i
+                                  end
+
+AddOrUpdate.run(number_of_expected_translations)
