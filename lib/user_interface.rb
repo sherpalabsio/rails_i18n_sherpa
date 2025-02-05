@@ -2,6 +2,8 @@
 
 module UserInterface
   TEMP_FILE_PATH = "/tmp/TRANSLATIONS"
+  SUPPORTED_LOCALES = %w[en nl fr].freeze
+  SUPPORTED_LOCALE_PREFIXES = SUPPORTED_LOCALES.map { |locale| "#{locale}:" }
 
   def self.fetch_translations
     editor = ENV["EDITOR"] || "vim"
@@ -34,9 +36,8 @@ module UserInterface
       end
 
       # Locale block starts?
-      # first_three_chars = line[0..2]
-      # AddOrUpdate::SUPPORTED_LOCALES
-      if line.start_with?("en:") || line.start_with?("fr:")
+      first_three_chars = line[0..2]
+      if SUPPORTED_LOCALE_PREFIXES.include?(first_three_chars)
         translation_block[locale_block[:locale]] = locale_block[:value] if locale_block
 
         locale, value = line.split(":", 2)
