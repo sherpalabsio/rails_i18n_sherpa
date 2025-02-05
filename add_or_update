@@ -1,5 +1,5 @@
 #!/usr/bin/env ruby
 
-require_relative "./add_or_update"
+require_relative "./lib/add_or_update"
 
 AddOrUpdate.run
