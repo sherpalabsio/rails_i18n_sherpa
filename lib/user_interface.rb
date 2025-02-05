@@ -10,14 +10,12 @@ module UserInterface
 
     system("#{editor} #{TEMP_FILE_PATH}")
 
-    if File.exist?(TEMP_FILE_PATH)
-      translations = parse_user_input(File.read(TEMP_FILE_PATH))
-      File.delete(TEMP_FILE_PATH)
-      remove_last_console_line
-      translations
-    else
-      exit 2
-    end
+    return unless File.exist?(TEMP_FILE_PATH)
+
+    translations = parse_user_input(File.read(TEMP_FILE_PATH))
+    File.delete(TEMP_FILE_PATH)
+    remove_last_console_line
+    translations
   end
 
   def self.parse_user_input(content)

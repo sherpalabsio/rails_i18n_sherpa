@@ -13,10 +13,14 @@ class AddOrUpdate
   end
 
   def run
-    UserInterface.fetch_translations.each do |entry|
+    translations = UserInterface.fetch_translations
+    return if translations.nil?
+
+    translations.each do |entry|
       # TODO: Warn if key is missing
       key_path = entry["key"].split(".")
 
+      # TODO: Ignore empty translations
       SUPPORTED_LOCALES.each do |locale|
         locale_file = File.join("config", "locales", "#{locale}.yml")
 

@@ -25,6 +25,13 @@ describe AddOrUpdate do
       FileUtils.mkdir_p(File.dirname(locale_file))
       File.write(locale_file, content)
     end
+
+    allow_any_instance_of(Object).to receive(:system) do |_, command|
+      if command.include?(UserInterface::TEMP_FILE_PATH)
+        File.write(UserInterface::TEMP_FILE_PATH,
+                   translation_from_user)
+      end
+    end
   end
 
   after do
@@ -41,10 +48,6 @@ describe AddOrUpdate do
     end
 
     it "adds a new translation key" do
-      allow_any_instance_of(Object).to receive(:system) do |_, command|
-        File.write("/tmp/TRANSLATIONS.yml", translation_from_user) if command.include?("/tmp/TRANSLATIONS.yml")
-      end
-
       described_class.run
 
       expected_content = <<~HEREDOC
@@ -70,10 +73,6 @@ describe AddOrUpdate do
     end
 
     it "adds a new translation key" do
-      allow_any_instance_of(Object).to receive(:system) do |_, command|
-        File.write("/tmp/TRANSLATIONS.yml", translation_from_user) if command.include?("/tmp/TRANSLATIONS.yml")
-      end
-
       described_class.run
 
       expected_content = <<~HEREDOC
