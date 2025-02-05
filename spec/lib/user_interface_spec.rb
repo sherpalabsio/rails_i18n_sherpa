@@ -42,20 +42,32 @@ describe UserInterface do
       expect(File).not_to exist(described_class::TEMP_FILE_PATH)
     end
 
-    describe "???" do
+    describe "cleaning the user input" do
       let(:translations_from_the_user) do
         <<~TRANSLATIONS
-          key: key1.value
-          en: Warning: Keep right
+          key:
+          en: Line 1
+          fr: French
+
+          key: key2.value
+          en:
+          fr: French
         TRANSLATIONS
       end
 
-      it "returns the expected data structure" do
+      it "ignores empty keys" do
         translations = described_class.fetch_translations
 
         expect(translations).to be_an(Array)
-        expect(translations[0]["key"]).to eq("key1.value")
-        expect(translations[0]["en"]).to eq("Warning: Keep right")
+        expect(translations.length).to eq(1)
+        expect(translations[0]["key"]).to eq("key2.value")
+      end
+
+      it "ignores empty locales" do
+        translations = described_class.fetch_translations
+
+        expect(translations[0].key?("en")).to be_falsey
+        expect(translations[0]["fr"]).to eq("French")
       end
     end
 

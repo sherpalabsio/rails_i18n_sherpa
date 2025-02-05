@@ -21,7 +21,8 @@ module UserInterface
     translations = parse_user_input(File.read(TEMP_FILE_PATH))
     File.delete(TEMP_FILE_PATH)
     remove_last_console_line if ENV["RUBY_ENV"] != "test"
-    translations
+
+    clean_translations(translations)
   end
 
   def self.user_input_file_template(number_of_expected_translations)
@@ -65,6 +66,17 @@ module UserInterface
 
     translation_block[locale_block[:locale]] = locale_block[:value] if locale_block
     final_content << translation_block if translation_block
+  end
+
+  def self.clean_translations(translations)
+    # Remove translations with missing keys
+    translations.reject! { |translation| translation["key"].empty? }
+    # Remove empty locales
+    translations.each do |translation|
+      translation.delete_if { |_, value| value.nil? || value.empty? }
+    end
+
+    translations
   end
 
   def self.remove_last_console_line

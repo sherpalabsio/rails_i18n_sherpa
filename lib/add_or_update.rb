@@ -22,6 +22,8 @@ class AddOrUpdate
 
       # TODO: Ignore empty translations
       SUPPORTED_LOCALES.each do |locale|
+        next unless entry.key?(locale)
+
         locale_file = File.join("config", "locales", "#{locale}.yml")
 
         current_translations = YAML.load_file(locale_file)
