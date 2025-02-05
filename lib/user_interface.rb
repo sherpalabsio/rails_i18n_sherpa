@@ -6,7 +6,7 @@ module UserInterface
   def self.fetch_translations
     editor = ENV["EDITOR"] || "vim"
 
-    puts "hint: Waiting for your editor to close the file..."
+    puts "hint: Waiting for your editor to close the file..." if ENV["RUBY_ENV"] != "test"
 
     system("#{editor} #{TEMP_FILE_PATH}")
 
@@ -14,7 +14,7 @@ module UserInterface
 
     translations = parse_user_input(File.read(TEMP_FILE_PATH))
     File.delete(TEMP_FILE_PATH)
-    remove_last_console_line
+    remove_last_console_line if ENV["RUBY_ENV"] != "test"
     translations
   end
 
