@@ -1,7 +1,5 @@
 # frozen_string_literal: true
 
-require "yaml"
-
 module UserInterface
   TEMP_FILE_PATH = "/tmp/TRANSLATIONS"
 
@@ -13,7 +11,7 @@ module UserInterface
     system("#{editor} #{TEMP_FILE_PATH}")
 
     if File.exist?(TEMP_FILE_PATH)
-      translations = parse_translations(File.read(TEMP_FILE_PATH))
+      translations = parse_user_input(File.read(TEMP_FILE_PATH))
       File.delete(TEMP_FILE_PATH)
       remove_last_console_line
       translations
@@ -22,24 +20,44 @@ module UserInterface
     end
   end
 
-  def self.parse_translations(content)
+  def self.parse_user_input(content)
     final_content = []
 
-    content.each_line do |line|
-      line.strip!
-      next if line.empty?
+    translation_block = nil
+    locale_block = nil
 
-      key, = line.split(": ", 2)
-      final_content << if key == "key"
-                         "- #{line}"
-                       elsif key.length == 2
-                         "  #{line}"
-                       else
-                         "    #{line}"
-                       end
+    content.each_line do |line|
+      # Translation block starts
+      if line.start_with?("key:")
+        final_content << translation_block if translation_block
+        translation_block = {}
+        translation_block["key"] = line.split(":").last.strip
+        next
+      end
+
+      # Locale block starts?
+      # first_three_chars = line[0..2]
+      # AddOrUpdate::SUPPORTED_LOCALES
+      if line.start_with?("en:") || line.start_with?("fr:")
+        translation_block[locale_block[:locale]] = locale_block[:value] if locale_block
+
+        locale, value = line.split(":", 2)
+        locale_block = {}
+        locale_block[:locale] = locale
+        locale_block[:value] = value.strip if value.strip.length.positive?
+        next
+      end
+
+      # Locale block continues if it's a multiline value
+      if locale_block.key?(:value)
+        locale_block[:value] += "\n#{line.strip}"
+      else
+        locale_block[:value] = line.strip
+      end
     end
 
-    YAML.safe_load(final_content.join("\n"))
+    translation_block[locale_block[:locale]] = locale_block[:value] if locale_block
+    final_content << translation_block if translation_block
   end
 
   def self.remove_last_console_line

@@ -1,7 +1,6 @@
 # frozen_string_literal: true
 
 require "fileutils"
-
 require_relative "../../lib/find_key_by_value"
 
 describe FindKeyByValue do
