@@ -5,7 +5,7 @@ require_relative "./lib/find_key_by_value"
 translation_key = FindKeyByValue.run(ARGV[0])
 
 if translation_key
-  system("ack", translation_key)
+  system("grep -rn \"#{translation_key}\" --include=\*.{rb,js,ts,vue} ./app ./lib ./spec")
 else
   puts "No key found for value: #{ARGV[0]}"
 end
