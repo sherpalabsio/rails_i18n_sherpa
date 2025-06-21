@@ -2,7 +2,9 @@
 
 require_relative "./lib/find_key_by_value"
 
-translation_key = FindKeyByValue.run(ARGV[0])
+english_copy = ARGV.join(" ")
+
+translation_key = FindKeyByValue.run(english_copy)
 
 if translation_key.nil?
   puts "No key found"
