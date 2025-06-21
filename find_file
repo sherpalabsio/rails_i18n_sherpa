@@ -7,7 +7,7 @@ translation_key = FindKeyByValue.run(ARGV[0])
 puts "Translation key: #{translation_key}"
 
 if translation_key
-  system("grep -rn \"#{translation_key}\" --include=\*.{rb,js,ts,vue} ./app ./lib ./spec")
+  system("grep -rn \"#{translation_key}\" --include=\*.{rb,slim,js,ts,vue} ./app ./lib ./spec")
 else
   puts "No key found"
 end
