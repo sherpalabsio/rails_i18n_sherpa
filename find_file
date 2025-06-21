@@ -4,10 +4,31 @@ require_relative "./lib/find_key_by_value"
 
 translation_key = FindKeyByValue.run(ARGV[0])
 
+if translation_key.nil?
+  puts "No key found"
+  exit 1
+end
+
 puts "Translation key: #{translation_key}"
 
-if translation_key
-  system("grep -rn \"#{translation_key}\" --include=\*.{rb,slim,js,ts,vue} ./app ./lib ./spec")
-else
-  puts "No key found"
+Dir.mkdir("tmp") unless Dir.exist?("tmp")
+File.write("tmp/jumper", "")
+
+require "find"
+
+file_extensions = %w[.rb .slim .js .ts .vue]
+search_dirs = ["./app", "./lib", "./spec"].select { |dir| Dir.exist?(dir) }
+
+search_dirs.each do |dir|
+  Find.find(dir) do |path|
+    next unless file_extensions.include?(File.extname(path))
+    next unless File.file?(path)
+
+    File.foreach(path).with_index(1) do |line, lineno|
+      next unless line.include?(translation_key)
+
+      puts "#{path}:#{lineno} | #{line.strip}"
+      File.open("tmp/jumper", "a") { |f| f.puts "#{path}:#{lineno}" }
+    end
+  end
 end
