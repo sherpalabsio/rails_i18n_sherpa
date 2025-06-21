@@ -31,6 +31,38 @@ describe FindKeyByValue do
     end
   end
 
+  describe "finding exact match" do
+    let(:locale_file_content) do
+      <<~HEREDOC
+        ---
+        en:
+          level_1:
+            sub_level1: No match here
+      HEREDOC
+    end
+
+    let(:sub_locale_file_content) do
+      <<~HEREDOC
+        ---
+        en:
+          sub_folder_level_1:
+            sub_level1: Initial content
+      HEREDOC
+    end
+
+    before do
+      locale_file = File.join("config", "locales", "sub_folder", "en.yml")
+      FileUtils.mkdir_p(File.dirname(locale_file))
+      File.write(locale_file, sub_locale_file_content)
+    end
+
+    it "returns the expected key" do
+      result = described_class.run("Initial content")
+
+      expect(result).to eq("sub_folder_level_1.sub_level1")
+    end
+  end
+
   describe "finding partial match" do
     let(:locale_file_content) do
       <<~HEREDOC

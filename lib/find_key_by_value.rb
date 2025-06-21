@@ -4,10 +4,21 @@ require "yaml"
 # require "fileutils"
 
 class FindKeyByValue
-  LOCALE_FILE_PATH = File.join("config", "locales", "en.yml")
+  LOCALES_FOLDER = File.join("config", "locales")
 
   def self.run(value)
-    current_translations = YAML.load_file(LOCALE_FILE_PATH)["en"]
+    locales_files = Dir.glob(File.join(LOCALES_FOLDER, "**", "en.yml"))
+
+    locales_files.each do |file_path|
+      result = run_for_file(file_path, value)
+      return result if result
+    end
+
+    nil
+  end
+
+  def self.run_for_file(file_path, value)
+    current_translations = YAML.load_file(file_path)["en"]
 
     if value.include?("__")
       value = value
